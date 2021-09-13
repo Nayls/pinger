@@ -39,12 +39,9 @@ func GetGenerateCmd() *cobra.Command {
 }
 
 func init() {
-	initCobraCommands()
-	initViperCommands()
-}
+	cobra.OnInitialize(initConfig)
 
-func initCobraCommands() {
 	generateCmd.AddCommand(generateCliDocCmd)
 }
 
-func initViperCommands() {}
+func initConfig() {}

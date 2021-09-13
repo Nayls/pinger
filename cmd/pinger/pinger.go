@@ -12,17 +12,6 @@ import (
 )
 
 func initCobraConfig() {
-	rootCmd := config.GetRootCmd()
-
-	// Add generate command
-	rootCmd.AddCommand(generate.GetGenerateCmd())
-
-	// Add server command
-	rootCmd.AddCommand(server.GetServerCmd())
-
-	// Add completion command
-	rootCmd.AddCommand(completion.GetCompletionCmd())
-
 	cobra.OnInitialize(func() {
 		// if _, err := os.Stat("./docs"); os.IsNotExist(err) {
 		// 	if err := os.Mkdir("./docs", 0755); err != nil {
@@ -33,6 +22,17 @@ func initCobraConfig() {
 		// 	log.Fatal(err)
 		// }
 	})
+
+	rootCmd := config.GetRootCmd()
+
+	// Add generate command
+	rootCmd.AddCommand(generate.GetGenerateCmd())
+
+	// Add server command
+	rootCmd.AddCommand(server.GetServerCmd())
+
+	// Add completion command
+	rootCmd.AddCommand(completion.GetCompletionCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

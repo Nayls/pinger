@@ -1,8 +1,8 @@
 package server
 
 import (
-	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/go-playground/validator/v10"
@@ -12,34 +12,34 @@ import (
 )
 
 // serverCmd represents the server command
-var serverCmd = &cobra.Command{
-	Use:   "server",
-	Short: "Command for server managmenent",
-	Long:  `Command for server managmenent and configurations`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("server called")
-	},
-}
+var (
+	serverCfgFile string
+	serverCfg     config.Config
+
+	serverCmd = &cobra.Command{
+		Use:   "server",
+		Short: "Command for server managmenent",
+		Long:  `Command for server managmenent and configurations`,
+		Run:   func(cmd *cobra.Command, args []string) {},
+	}
+)
 
 func GetServerCmd() *cobra.Command {
 	return serverCmd
 }
 
 func init() {
-	initCobraCommands()
-	initViperCommands()
-}
+	cobra.OnInitialize(initConfig)
 
-func initCobraCommands() {
 	// Add flag for config file
-	serverCmd.Flags().String("server-config", "", "config file path (default is \"./server-config.yaml)\"")
-	if err := viper.BindPFlag("server-config", serverCmd.Flags().Lookup("server-config")); err != nil {
+	serverCmd.Flags().StringVar(&serverCfgFile, "server-config", "", "config file path (default is \"./server-config.yaml)\"")
+	if err := viper.BindPFlag("server.config", serverCmd.Flags().Lookup("server-config")); err != nil {
 		log.Fatal(err)
 	}
 
 	// Add flag for server
-	serverCmd.Flags().String("server-host", "", "server host (default is \"\")")
-	serverCmd.Flags().String("server-port", "", "server port (default is \"8080\")")
+	serverCmd.Flags().StringVar(&serverCfg.Server.Host, "server-host", "", "server host (default is \"\")")
+	serverCmd.Flags().StringVar(&serverCfg.Server.Port, "server-port", "", "server port (default is \"8080\")")
 	if err := viper.BindPFlag("server.host", serverCmd.Flags().Lookup("server-host")); err != nil {
 		log.Fatal(err)
 	}
@@ -48,14 +48,14 @@ func initCobraCommands() {
 	}
 
 	// Add flag for logger
-	serverCmd.Flags().String("logger-level", "", "logger level (default is \"debug\")")
+	serverCmd.Flags().StringVar(&serverCfg.Logger.Level, "logger-level", "", "logger level (default is \"debug\")")
 	if err := viper.BindPFlag("logger.level", serverCmd.Flags().Lookup("logger-level")); err != nil {
 		log.Fatal(err)
 	}
 
 	// Add flag for database
-	serverCmd.Flags().String("database-host", "", "database host (default is \"localhost\")")
-	serverCmd.Flags().String("database-port", "", "database port (default is \"5439\")")
+	serverCmd.Flags().StringVar(&serverCfg.Database.Host, "database-host", "", "database host (default is \"localhost\")")
+	serverCmd.Flags().StringVar(&serverCfg.Database.Port, "database-port", "", "database port (default is \"5439\")")
 	if err := viper.BindPFlag("database.host", serverCmd.Flags().Lookup("database-host")); err != nil {
 		log.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func initCobraCommands() {
 	}
 }
 
-func initViperCommands() {
+func initConfig() {
 	// Server default configurations
 	viper.SetDefault("server.host", "")
 	viper.SetDefault("server.port", "8080")
@@ -77,30 +77,30 @@ func initViperCommands() {
 	viper.SetDefault("database.port", "5439")
 
 	// Read server-config.yaml
-	if viper.IsSet("server-config") && viper.Get("server-config") == 0 {
-		// todo: change config from cobra
-		log.Print("config is set")
+	if viper.IsSet("server.config") && len(viper.GetString("server.config")) >= 0 {
+		filename := filepath.Clean(viper.GetString("server.config"))
+		ext := filepath.Ext(filename)[1:]
+		name := filepath.Base(filename)[0 : len(filepath.Base(filename))-len(ext)-1]
+		path := filepath.Clean(filename)[0 : len(filename)-len(name)-len(ext)-1]
+
+		viper.SetConfigName(name)
+		viper.SetConfigType(ext)
+		viper.AddConfigPath(path)
 	} else {
 		viper.SetConfigName("server-config")
 		viper.SetConfigType("yaml")
 		viper.AddConfigPath("./configs")
 		viper.AddConfigPath(".")
 	}
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Printf("config file not found error - %v", err)
-		} else if _, ok := err.(viper.ConfigMarshalError); ok {
-			log.Printf("config marshal error - %v", err)
-		} else {
-			log.Printf("config filer read error - %v", err)
-		}
-	}
 
-	// Enable watching config file
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Print("config file changed:", e.Name)
-	})
-	viper.WatchConfig()
+	if err := viper.ReadInConfig(); err == nil {
+		log.Print("Upload server config - ", viper.ConfigFileUsed())
+		// Enable watching config file
+		viper.OnConfigChange(func(e fsnotify.Event) {
+			log.Print("config file changed:", e.Name)
+		})
+		viper.WatchConfig()
+	}
 
 	// Read env in system environment
 	viper.SetEnvPrefix("pinger")
@@ -124,8 +124,8 @@ func initViperCommands() {
 		viper.Set("database.port", viper.Get("database_port"))
 	}
 
-	var configuration config.Config
 	// Unmarshal config and validate
+	var configuration config.Config
 	if err := viper.Unmarshal(&configuration); err != nil {
 		log.Printf("unmasrshal config error - %v", err)
 	}

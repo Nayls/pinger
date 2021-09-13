@@ -69,4 +69,8 @@ func GetCompletionCmd() *cobra.Command {
 	return completionCmd
 }
 
-func init() {}
+func init() {
+	cobra.OnInitialize(initConfig)
+}
+
+func initConfig() {}
