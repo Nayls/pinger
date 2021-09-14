@@ -13,11 +13,11 @@ Makefile: ;              # skip prerequisite discovery
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
 
-help: ## Display this help screen
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+help: #!# Display this help screen
+	@awk 'BEGIN {FS = ":.*#!#"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-].+:.*?#!#/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^#!#@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 # TASKS ============================================================================================================
-all: pre-run build-linux build-windows ## run job pre-run, build-linux, build-windows
+all: pre-run build-linux build-windows build-darwin #!# run job pre-run, build-linux, build-windows, build-darwin
 
 pre-run: ## job for deploy git
 	@echo "> Go mod tidy"
@@ -30,9 +30,20 @@ pre-run: ## job for deploy git
 	@go run cmd/pinger/pinger.go generate cli
 
 # LINUX BUILD
-build-linux: build-linux-i386 build-linux-amd64 ## build linux i386 and amd64
+build-linux: build-linux-386 build-linux-amd64 build-linux-arm build-linux-arm64 #!# build linux 386, amd64, arm, arm64
 
-build-linux-i386: ## build binary file
+build-linux-386: ## build binary file linux-386
+	@echo "> Build linux 386"
+	@GOOS=linux GOARCH=386 \
+		go build \
+		-a \
+		-mod vendor \
+		-ldflags "-s -w" \
+		-installsuffix cgo \
+		-trimpath \
+		-o bin/pinger-linux-386 ./cmd/pinger
+
+build-linux-amd64: ## build binary file linux-amd64
 	@echo "> Build linux amd64"
 	@GOOS=linux GOARCH=amd64 \
 		go build \
@@ -43,21 +54,43 @@ build-linux-i386: ## build binary file
 		-trimpath \
 		-o bin/pinger-linux-amd64 ./cmd/pinger
 
-build-linux-amd64: ## build binary file
-	@echo "> Build linux i386"
-	@GOOS=linux GOARCH=386 \
+build-linux-arm: ## build binary file linux-arm
+	@echo "> Build linux arm"
+	@GOOS=linux GOARCH=arm \
 		go build \
 		-a \
 		-mod vendor \
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/pinger-linux-i386 ./cmd/pinger
+		-o bin/pinger-linux-arm ./cmd/pinger
+
+build-linux-arm64: ## build binary file linux-arm64
+	@echo "> Build linux arm64"
+	@GOOS=linux GOARCH=arm64 \
+		go build \
+		-a \
+		-mod vendor \
+		-ldflags "-s -w" \
+		-installsuffix cgo \
+		-trimpath \
+		-o bin/pinger-linux-arm64 ./cmd/pinger
 
 # WINDOWS BUILD
-build-windows: build-windows-i386 build-windows-amd64 ## build windows i386 and amd64
+build-windows: build-windows-386 build-windows-amd64 build-windows-arm #!# build windows 386, amd64, arm
 
-build-windows-amd64: ## build 
+build-windows-386: ## build binary file windows-386
+	@echo "> Build windows 386"
+	@GOOS=windows GOARCH=386 \
+		go build \
+		-a \
+		-mod vendor \
+		-ldflags "-s -w" \
+		-installsuffix cgo \
+		-trimpath \
+		-o bin/pinger-windows-386 ./cmd/pinger
+
+build-windows-amd64: ## build binary file windows-amd64
 	@echo "> Build windows amd64"
 	@GOOS=windows GOARCH=amd64 \
 		go build \
@@ -68,13 +101,38 @@ build-windows-amd64: ## build
 		-trimpath \
 		-o bin/pinger-windows-amd64 ./cmd/pinger
 
-build-windows-i386: ## build 
-	@echo "> Build windows i386"
-	@GOOS=windows GOARCH=386 \
+build-windows-arm: ## build binary file windows-arm
+	@echo "> Build windows arm"
+	@GOOS=windows GOARCH=arm \
 		go build \
 		-a \
 		-mod vendor \
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/pinger-windows-i386 ./cmd/pinger
+		-o bin/pinger-windows-arm ./cmd/pinger
+
+# MACOS BUILD
+build-darwin: build-darwin-amd64 build-darwin-arm64 #!# build darwin amd64, arm64
+
+build-darwin-amd64: ## build binary file darwin-amd64
+	@echo "> Build darwin amd64"
+	@GOOS=darwin GOARCH=amd64 \
+		go build \
+		-a \
+		-mod vendor \
+		-ldflags "-s -w" \
+		-installsuffix cgo \
+		-trimpath \
+		-o bin/pinger-darwin-amd64 ./cmd/pinger
+
+build-darwin-arm64: ## build binary file darwin-arm64
+	@echo "> Build darwin arm64"
+	@GOOS=darwin GOARCH=arm64 \
+		go build \
+		-a \
+		-mod vendor \
+		-ldflags "-s -w" \
+		-installsuffix cgo \
+		-trimpath \
+		-o bin/pinger-darwin-arm64 ./cmd/pinger
