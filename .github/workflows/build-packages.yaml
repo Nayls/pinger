@@ -1,0 +1,143 @@
+name: Build and release packages
+on: [release]
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build linux-386
+        run: make build-linux-386
+
+      - name: Build linux-amd64
+        run: make build-linux-amd64
+
+      - name: Build linux-arm
+        run: make build-linux-arm64
+
+      - name: Build linux-arm64
+        run: make build-linux-arm64
+
+      - name: Upload build
+        uses: actions/upload-artifact@master
+        with:
+          name: linux
+          path: bin/pinger-linux-*
+
+      - name: Upload to Release - linux-386
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: linux/pinger-linux-386 application/octet-stream
+
+      - name: Upload to Release - linux-amd64
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: linux/pinger-linux-amd64 application/octet-stream
+
+      - name: Upload to Release - linux-arm
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: linux/pinger-linux-arm application/octet-stream
+
+      - name: Upload to Release - linux-arm64
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: linux/pinger-linux-arm64 application/octet-stream
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build windows-386
+        run: make build-windows-386
+
+      - name: Build windows-amd64
+        run: make build-windows-amd64
+
+      - name: Build windows-arm
+        run: make build-windows-arm64
+
+      - name: Upload build
+        uses: actions/upload-artifact@master
+        with:
+          name: windows
+          path: bin/pinger-windows-*
+
+      - name: Upload to Release - windows-386
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: windows/pinger-windows-386.exe application/octet-stream
+
+      - name: Upload to Release - windows-amd64
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: windows/pinger-windows-amd64.exe application/octet-stream
+
+      - name: Upload to Release - windows-arm
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: windows/pinger-windows-arm application/octet-stream
+
+  build-darwin:
+    runs-on: macos-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build darwin-amd64
+        run: make build-darwin-amd64
+
+      - name: Build darwin-arm64
+        run: make build-darwin-arm64
+
+      - name: Upload build
+        uses: actions/upload-artifact@master
+        with:
+          name: darwin
+          path: bin/pinger-darwin-*
+
+      - name: Upload to Release - darwin-amd64
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: darwin/pinger-darwin-amd64 application/octet-stream
+
+      - name: Upload to Release - darwin-arm64
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          args: darwin/pinger-darwin-arm64 application/octet-stream

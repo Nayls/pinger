@@ -88,7 +88,7 @@ build-windows-386: ## build binary file windows-386
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/pinger-windows-386 ./cmd/pinger
+		-o bin/pinger-windows-386.exe ./cmd/pinger
 
 build-windows-amd64: ## build binary file windows-amd64
 	@echo "> Build windows amd64"
@@ -99,7 +99,7 @@ build-windows-amd64: ## build binary file windows-amd64
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/pinger-windows-amd64 ./cmd/pinger
+		-o bin/pinger-windows-amd64.exe ./cmd/pinger
 
 build-windows-arm: ## build binary file windows-arm
 	@echo "> Build windows arm"
