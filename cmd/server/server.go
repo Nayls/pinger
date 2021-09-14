@@ -32,8 +32,8 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Add flag for config file
-	serverCmd.Flags().StringVar(&serverCfgFile, "server-config", "", "config file path (default is \"./server-config.yaml)\"")
-	if err := viper.BindPFlag("server.config", serverCmd.Flags().Lookup("server-config")); err != nil {
+	serverCmd.Flags().StringVarP(&serverCfgFile, "config", "c", "", "config file path (default is \"./config.yaml)\"")
+	if err := viper.BindPFlag("server.config", serverCmd.Flags().Lookup("config")); err != nil {
 		log.Fatal(err)
 	}
 
@@ -87,19 +87,21 @@ func initConfig() {
 		viper.SetConfigType(ext)
 		viper.AddConfigPath(path)
 	} else {
-		viper.SetConfigName("server-config")
+		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
 		viper.AddConfigPath("./configs")
 		viper.AddConfigPath(".")
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
-		log.Print("Upload server config - ", viper.ConfigFileUsed())
+		log.Print("Read server config - ", viper.ConfigFileUsed())
 		// Enable watching config file
 		viper.OnConfigChange(func(e fsnotify.Event) {
 			log.Print("config file changed:", e.Name)
 		})
 		viper.WatchConfig()
+	} else {
+		log.Print("Server config is not read, uses default value")
 	}
 
 	// Read env in system environment

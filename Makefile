@@ -17,15 +17,17 @@ help: ## Display this help screen
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 # TASKS ============================================================================================================
-all: pre_hook build-linux build-windows ## run pre_hook and build
+all: pre-run build-linux build-windows ## run job pre-run, build-linux, build-windows
 
-pre_hook: ## job for deploy git
+pre-run: ## job for deploy git
 	@echo "> Go mod tidy"
 	@go mod tidy
 	@echo "> Go mod download"
 	@go mod download
 	@echo "> Go mod vendor"
 	@go mod vendor
+	@echo "> Generate cli docs"
+	@go run cmd/pinger/pinger.go generate cli
 
 # LINUX BUILD
 build-linux: build-linux-i386 build-linux-amd64 ## build linux i386 and amd64

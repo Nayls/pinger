@@ -22,13 +22,13 @@ var generateCliDocCmd = &cobra.Command{
 	Short: "Generate cli documentation",
 	Long:  `Generate cli documentations `,
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, err := os.Stat("./docs"); os.IsNotExist(err) {
-			if err := os.Mkdir("./docs", 0755); err != nil {
+		if _, err := os.Stat("./docs/cli"); os.IsNotExist(err) {
+			if err := os.MkdirAll("./docs/cli", 0755); err != nil {
 				log.Fatal(err)
 			}
 		}
 
-		if err := doc.GenMarkdownTree(config.GetRootCmd(), "./docs"); err != nil {
+		if err := doc.GenMarkdownTree(config.GetRootCmd(), "./docs/cli"); err != nil {
 			log.Fatal(err)
 		}
 	},
