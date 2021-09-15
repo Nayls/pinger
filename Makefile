@@ -27,7 +27,7 @@ pre-run: ## job for deploy git
 	@echo "> Go mod vendor"
 	@go mod vendor
 	@echo "> Generate cli docs"
-	@go run cmd/pinger/pinger.go generate cli
+	@go run main.go generate cli
 
 # LINUX BUILD
 build-linux: build-linux-386 build-linux-amd64 build-linux-arm build-linux-arm64 #!# build linux 386, amd64, arm, arm64
@@ -41,7 +41,7 @@ build-linux-386: ## build binary file linux-386
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/linux/pinger-linux-386 ./cmd/pinger
+		-o bin/linux/pinger-linux-386 ./main.go
 
 build-linux-amd64: ## build binary file linux-amd64
 	@echo "> Build linux amd64"
@@ -52,7 +52,7 @@ build-linux-amd64: ## build binary file linux-amd64
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/linux/pinger-linux-amd64 ./cmd/pinger
+		-o bin/linux/pinger-linux-amd64 ./main.go
 
 build-linux-arm: ## build binary file linux-arm
 	@echo "> Build linux arm"
@@ -63,7 +63,7 @@ build-linux-arm: ## build binary file linux-arm
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/linux/pinger-linux-arm ./cmd/pinger
+		-o bin/linux/pinger-linux-arm ./main.go
 
 build-linux-arm64: ## build binary file linux-arm64
 	@echo "> Build linux arm64"
@@ -74,7 +74,7 @@ build-linux-arm64: ## build binary file linux-arm64
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/linux/pinger-linux-arm64 ./cmd/pinger
+		-o bin/linux/pinger-linux-arm64 ./main.go
 
 # WINDOWS BUILD
 build-windows: build-windows-386 build-windows-amd64 build-windows-arm #!# build windows 386, amd64, arm
@@ -88,7 +88,7 @@ build-windows-386: ## build binary file windows-386
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/windows/pinger-windows-386.exe ./cmd/pinger
+		-o bin/windows/pinger-windows-386.exe ./main.go
 
 build-windows-amd64: ## build binary file windows-amd64
 	@echo "> Build windows amd64"
@@ -99,7 +99,7 @@ build-windows-amd64: ## build binary file windows-amd64
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/windows/pinger-windows-amd64.exe ./cmd/pinger
+		-o bin/windows/pinger-windows-amd64.exe ./main.go
 
 build-windows-arm: ## build binary file windows-arm
 	@echo "> Build windows arm"
@@ -110,7 +110,7 @@ build-windows-arm: ## build binary file windows-arm
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/windows/pinger-windows-arm ./cmd/pinger
+		-o bin/windows/pinger-windows-arm ./main.go
 
 # MACOS BUILD
 build-darwin: build-darwin-amd64 build-darwin-arm64 #!# build darwin amd64, arm64
@@ -124,7 +124,7 @@ build-darwin-amd64: ## build binary file darwin-amd64
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/darwin/pinger-darwin-amd64 ./cmd/pinger
+		-o bin/darwin/pinger-darwin-amd64 ./main.go
 
 build-darwin-arm64: ## build binary file darwin-arm64
 	@echo "> Build darwin arm64"
@@ -135,4 +135,4 @@ build-darwin-arm64: ## build binary file darwin-arm64
 		-ldflags "-s -w" \
 		-installsuffix cgo \
 		-trimpath \
-		-o bin/darwin/pinger-darwin-arm64 ./cmd/pinger
+		-o bin/darwin/pinger-darwin-arm64 ./main.go

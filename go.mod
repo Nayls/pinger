@@ -1,4 +1,4 @@
-module gitlab.com/nayls.cloud/ping.nayls.cloud/pinger
+module github.com/Nayls/pinger
 
 go 1.16
 

@@ -1,17 +1,17 @@
-package main
+package pinger
 
 import (
 	"log"
 	"os"
 
+	"github.com/Nayls/pinger/cmd/completion"
+	"github.com/Nayls/pinger/cmd/generate"
+	"github.com/Nayls/pinger/cmd/server"
+	"github.com/Nayls/pinger/internal/cli"
 	"github.com/spf13/cobra"
-	"gitlab.com/nayls.cloud/ping.nayls.cloud/pinger/cmd/completion"
-	"gitlab.com/nayls.cloud/ping.nayls.cloud/pinger/cmd/generate"
-	"gitlab.com/nayls.cloud/ping.nayls.cloud/pinger/cmd/server"
-	"gitlab.com/nayls.cloud/ping.nayls.cloud/pinger/internal/config"
 )
 
-func initCobraConfig() {
+func InitCobraConfig() *cobra.Command {
 	cobra.OnInitialize(func() {
 		// if _, err := os.Stat("./docs"); os.IsNotExist(err) {
 		// 	if err := os.Mkdir("./docs", 0755); err != nil {
@@ -23,7 +23,7 @@ func initCobraConfig() {
 		// }
 	})
 
-	rootCmd := config.GetRootCmd()
+	rootCmd := cli.GetRootCmd()
 
 	// Add generate command
 	rootCmd.AddCommand(generate.GetGenerateCmd())
@@ -34,14 +34,12 @@ func initCobraConfig() {
 	// Add completion command
 	rootCmd.AddCommand(completion.GetCompletionCmd())
 
-	if err := rootCmd.Execute(); err != nil {
+	return rootCmd
+}
+
+func init() {
+	if err := InitCobraConfig().Execute(); err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
 }
-
-func init() {
-	initCobraConfig()
-}
-
-func main() {}

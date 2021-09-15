@@ -4,11 +4,11 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/Nayls/pinger/internal/config"
 	"github.com/fsnotify/fsnotify"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gitlab.com/nayls.cloud/ping.nayls.cloud/pinger/internal/config"
 )
 
 // serverCmd represents the server command
