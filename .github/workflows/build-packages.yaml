@@ -1,5 +1,11 @@
 name: Build and Release packages
-on: [release]
+on:
+  release:
+    types:
+      - prereleased
+      - released
+    tags:
+      - v*
 jobs:
   build-linux:
     runs-on: ubuntu-latest
