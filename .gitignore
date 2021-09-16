@@ -1,2 +1,8 @@
 bin/
 pinger
+
+!cmd/**
+!configs/**
+!docs/**
+!internal/**
+!vendor/**

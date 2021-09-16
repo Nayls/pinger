@@ -17,20 +17,34 @@ help: #!# Display this help screen
 	@awk 'BEGIN {FS = ":.*#!#"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-].+:.*?#!#/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^#!#@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 # TASKS ============================================================================================================
-all: pre-run build-linux build-windows build-darwin #!# run job pre-run, build-linux, build-windows, build-darwin
+all: pre-commit generate-docs build #!# Run jobs: pre-commit, generate-docs, build
+all-develop: pre-commit generate-docs build-linux-amd64 #!# Run jobs: pre-commit, generate-docs, build-linux-amd64
 
-pre-run: ## job for deploy git
+pre-commit: dependency test generate-docs #!# Run jobs: dependency, test, genereate-docs
+
+dependency: #!# Download all dependency and generate vendor
+	@echo "> Go fmt"
+	@go fmt ./...
 	@echo "> Go mod tidy"
 	@go mod tidy
 	@echo "> Go mod download"
 	@go mod download
 	@echo "> Go mod vendor"
 	@go mod vendor
+
+test: #!# Run test
+	@echo "> Run tests"
+	@go test ./...
+
+generate-docs: #!# Generate docs
 	@echo "> Generate cli docs"
 	@go run main.go generate cli
 
+
+build: build-linux build-windows build-darwin #!# Run jobs: build-linux, build-windows, build-darwin
+
 # LINUX BUILD
-build-linux: build-linux-386 build-linux-amd64 build-linux-arm build-linux-arm64 #!# build linux 386, amd64, arm, arm64
+build-linux: build-linux-386 build-linux-amd64 build-linux-arm build-linux-arm64 #!# Build linux 386, amd64, arm, arm64
 
 build-linux-386: ## build binary file linux-386
 	@echo "> Build linux 386"
@@ -76,8 +90,9 @@ build-linux-arm64: ## build binary file linux-arm64
 		-trimpath \
 		-o bin/linux/pinger-linux-arm64 ./main.go
 
+
 # WINDOWS BUILD
-build-windows: build-windows-386 build-windows-amd64 build-windows-arm #!# build windows 386, amd64, arm
+build-windows: build-windows-386 build-windows-amd64 build-windows-arm #!# Build windows 386, amd64, arm
 
 build-windows-386: ## build binary file windows-386
 	@echo "> Build windows 386"
@@ -112,8 +127,9 @@ build-windows-arm: ## build binary file windows-arm
 		-trimpath \
 		-o bin/windows/pinger-windows-arm ./main.go
 
+
 # MACOS BUILD
-build-darwin: build-darwin-amd64 build-darwin-arm64 #!# build darwin amd64, arm64
+build-darwin: build-darwin-amd64 build-darwin-arm64 #!# Build darwin amd64, arm64
 
 build-darwin-amd64: ## build binary file darwin-amd64
 	@echo "> Build darwin amd64"

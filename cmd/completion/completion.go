@@ -33,7 +33,7 @@ Zsh:
 	
 	# You will need to start a new shell for this setup to take effect.
 	
-fish:
+Fish:
 
 	$ pinger completion fish | source
 	

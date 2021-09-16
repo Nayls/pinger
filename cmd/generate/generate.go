@@ -14,30 +14,28 @@ var generateCmd = &cobra.Command{
 	Use:   "generate [command]",
 	Short: "Command generate",
 	Long:  `Command for generate docs and etc`,
-	Run:   func(cmd *cobra.Command, args []string) {},
+	// Run:          func(cmd *cobra.Command, args []string) {},
 }
 
 var generateCliDocCmd = &cobra.Command{
 	Use:   "cli",
 	Short: "Generate cli documentation",
-	Long:  `Generate cli documentations `,
-	Run:   doSomething,
+	Long:  `Generate cli documentations`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if _, err := os.Stat("./docs/cli"); os.IsNotExist(err) {
+			if err := os.MkdirAll("./docs/cli", 0755); err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		if err := doc.GenMarkdownTree(cli.GetRootCmd(), "./docs/cli"); err != nil {
+			log.Fatal(err)
+		}
+	},
 }
 
 func GetGenerateCmd() *cobra.Command {
 	return generateCmd
-}
-
-func doSomething(cmd *cobra.Command, args []string) {
-	if _, err := os.Stat("./docs/cli"); os.IsNotExist(err) {
-		if err := os.MkdirAll("./docs/cli", 0755); err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	if err := doc.GenMarkdownTree(cli.GetRootCmd(), "./docs/cli"); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func init() {

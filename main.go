@@ -1,9 +1,17 @@
 package main
 
-import "github.com/Nayls/pinger/cmd/pinger"
+import (
+	"log"
+	"os"
+
+	"github.com/Nayls/pinger/cmd/pinger"
+)
 
 func init() {
-	pinger.InitCobraConfig()
+	if err := pinger.InitCobraConfig().Execute(); err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 }
 
 func main() {
