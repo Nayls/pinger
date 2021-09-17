@@ -10,9 +10,10 @@ import (
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   "pinger [command]",
-		Short: "Pinger application",
-		Long:  `Application for pinger another host`,
+		Use:     "pinger [command]",
+		Short:   "Pinger application",
+		Long:    `Application for pinger another host`,
+		Version: "v0.2",
 		// Run: func(cmd *cobra.Command, args []string) {
 		// 	if len(args) == 0 {
 		// 		cmd.Help()
