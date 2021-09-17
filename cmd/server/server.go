@@ -94,14 +94,11 @@ func initConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
-		log.Print("Read server config - ", viper.ConfigFileUsed())
 		// Enable watching config file
 		viper.OnConfigChange(func(e fsnotify.Event) {
 			log.Print("config file changed:", e.Name)
 		})
 		viper.WatchConfig()
-	} else {
-		log.Print("Server config is not read, uses default value")
 	}
 
 	// Read env in system environment
