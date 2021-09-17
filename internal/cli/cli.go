@@ -7,7 +7,7 @@ var (
 		Use:     "pinger [command]",
 		Short:   "Pinger application",
 		Long:    `Application for pinger another host`,
-		Version: "v0.3",
+		Version: "v0.1.0",
 		// Run: func(cmd *cobra.Command, args []string) {
 		// 	if len(args) == 0 {
 		// 		cmd.Help()
