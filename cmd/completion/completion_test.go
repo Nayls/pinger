@@ -73,17 +73,11 @@ func Test_NegativeCallSingleCommandWithSubcommand(t *testing.T) {
 		assert.Error(t, err)
 	}
 
-	assert.NotContains(t, out, `Error:`)
+	assert.NotContains(t, out, `Error: invalid argument "fail" for "pinger completion"`)
 
 	assert.Contains(t, out, `Usage:`)
 	assert.NotContains(t, out, `Available Commands:`)
 	assert.Contains(t, out, `Flags:`)
-
-	assert.Contains(t, out, `To load completions:`)
-	assert.Contains(t, out, `Bash:`)
-	assert.Contains(t, out, `Zsh:`)
-	assert.Contains(t, out, `Fish:`)
-	assert.Contains(t, out, `PowerShell:`)
 }
 
 func Test_NegativeCallSingleCommandWithoutSubcommandWithFlag(t *testing.T) {
@@ -92,41 +86,9 @@ func Test_NegativeCallSingleCommandWithoutSubcommandWithFlag(t *testing.T) {
 		assert.Error(t, err)
 	}
 
-	assert.NotEmpty(t, out)
-}
+	assert.Contains(t, out, "Error: unknown flag: --fail")
 
-func Test_CallCommandWithSubcommandBash(t *testing.T) {
-	out, err := test.ExecuteCommand(buildTestCmd(), "completion", "fail")
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	assert.NotEmpty(t, out)
-}
-
-func Test_CallCommandWithSubcommandZsh(t *testing.T) {
-	out, err := test.ExecuteCommand(buildTestCmd(), "completion", "fail")
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	assert.NotEmpty(t, out)
-}
-
-func Test_CallCommandWithSubcommandFish(t *testing.T) {
-	out, err := test.ExecuteCommand(buildTestCmd(), "completion", "fail")
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	assert.NotEmpty(t, out)
-}
-
-func Test_CallCommandWithSubcommandPowershell(t *testing.T) {
-	out, err := test.ExecuteCommand(buildTestCmd(), "completion", "fail")
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	assert.NotEmpty(t, out)
+	assert.Contains(t, out, `Usage:`)
+	assert.NotContains(t, out, `Available Commands:`)
+	assert.Contains(t, out, `Flags:`)
 }

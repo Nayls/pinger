@@ -50,7 +50,7 @@ func Test_NegativeCallSingleCommandWithSubcommand(t *testing.T) {
 	assert.Contains(t, out, `Flags:`)
 }
 
-func Test_NegativeCallSingleCommandWithoutSubcommandWithFlag(t *testing.T) {
+func Test_NegativeCallSingleCommandWithLongFailFlag(t *testing.T) {
 	out, err := test.ExecuteCommand(buildTestCmd(), "generate", "--fail")
 	if err != nil {
 		assert.Error(t, err)
@@ -80,7 +80,7 @@ func Test_CallCommandWithSubcommandCli(t *testing.T) {
 	os.RemoveAll("./docs")
 }
 
-func Test_NegativeCallCommandWithSubcommandCliWithFlag(t *testing.T) {
+func Test_NegativeCallCommandWithSubcommandCliWithLongFailFlag(t *testing.T) {
 	out, err := test.ExecuteCommand(buildTestCmd(), "generate", "cli", "--fail")
 	if err != nil {
 		assert.Error(t, err)

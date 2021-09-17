@@ -57,7 +57,7 @@ func Test_NegativeCallSingleCommandWithSubcommand(t *testing.T) {
 	assert.Contains(t, out, `Run 'pinger --help' for usage.`)
 }
 
-func Test_NegativeCallSingleCommandWithoutSubcommandWithFlag(t *testing.T) {
+func Test_NegativeCallSingleCommandWithLongFailFlag(t *testing.T) {
 	out, err := test.ExecuteCommand(buildTestCmd(), "--fail")
 	if err != nil {
 		assert.Error(t, err)

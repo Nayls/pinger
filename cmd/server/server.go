@@ -79,9 +79,16 @@ func initConfig() {
 	// Read server-config.yaml
 	if viper.IsSet("server.config") && len(viper.GetString("server.config")) >= 0 {
 		filename := filepath.Clean(viper.GetString("server.config"))
-		ext := filepath.Ext(filename)[1:]
-		name := filepath.Base(filename)[0 : len(filepath.Base(filename))-len(ext)-1]
-		path := filepath.Clean(filename)[0 : len(filename)-len(name)-len(ext)-1]
+
+		var (
+			ext, name, path string
+		)
+
+		if len(filepath.Ext(filename)) > 0 {
+			ext = filepath.Ext(filename)[1:]
+		}
+		name = filepath.Base(filename)[0 : len(filepath.Base(filename))-len(ext)-1]
+		path = filepath.Clean(filename)[0 : len(filename)-len(name)-len(ext)-1]
 
 		viper.SetConfigName(name)
 		viper.SetConfigType(ext)
